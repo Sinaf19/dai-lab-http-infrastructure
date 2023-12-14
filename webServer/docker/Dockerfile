@@ -1,5 +1,4 @@
-FROM nginx:alpine
+FROM nginx
 LABEL authors="quentinsurdez"
 
-COPY . /usr/share/nginx/html
-
+COPY /website /usr/share/nginx/html
