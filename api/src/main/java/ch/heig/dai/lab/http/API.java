@@ -1,7 +1,7 @@
 package ch.heig.dai.lab.http;
 
 /**
- * Hello world!
+ * API
  *
  */
 public class API
