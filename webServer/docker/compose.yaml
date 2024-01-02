@@ -3,3 +3,8 @@ services:
     build: .
     ports:
       - '7080:80'
+  api:
+    image: web_api
+    container_name: web_api_container
+    ports:
+      - '9292:9292'
