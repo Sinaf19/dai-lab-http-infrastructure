@@ -43,7 +43,7 @@ public class MemeController {
         int id = Integer.parseInt(ctx.pathParam("id"));
         Meme meme = ctx.bodyAsClass(Meme.class);
         memes.put(id, meme);
-        ctx.status(200).result("Meme updated");
+        ctx.status(202).result("Meme updated");
     }
 
     public void deleteMeme(Context ctx) {

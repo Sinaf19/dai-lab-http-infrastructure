@@ -21,6 +21,7 @@ services:
 
   website:
     image: web_static
+    container_name: web_static_website
     labels:
       traefik.enable: true
       traefik.http.routers.website.rule: Host(`localhost`)
