@@ -19,9 +19,9 @@ import static org.junit.Assert.*;
 
 
 /**
- * Unit test for when the server is on :)
+ * Unit test for when the server is on :-)
  */
-public class AppTest
+public class APITest
 {
 
     private String url = "http://localhost/api";
