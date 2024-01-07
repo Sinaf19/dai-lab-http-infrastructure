@@ -36,6 +36,8 @@ services:
     labels:
       traefik.enable: true
       traefik.http.routers.api.rule: Host(`localhost`) && PathPrefix(`/api`)
+      traefik.http.services.api.loadBalancer.sticky.cookie: true
+      traefik.http.services.api.loadBalancer.sticky.cookie.name: web_api_cookie
     deploy:
       replicas: 5
     depends_on:
