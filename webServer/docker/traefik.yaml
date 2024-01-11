@@ -1,14 +1,14 @@
 # Traefik configuration file
 
-providers:
-  docker:
-    endpoint: "unix:///var/run/docker.sock"
-
-
 tls:
   certificates:
     - certFile: /etc/traefik/certificates/server.cert
       keyFile: /etc/traefik/certificates/server.key
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+
 
 entryPoints:
   web:
