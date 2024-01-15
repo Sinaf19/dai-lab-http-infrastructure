@@ -26,7 +26,7 @@ services:
       traefik.enable: true
       traefik.http.routers.website.rule: Host(`localhost`)
     deploy:
-      replicas: 5
+      replicas: 2
     depends_on:
       - reverse_proxy
 
@@ -40,6 +40,6 @@ services:
       traefik.http.services.web_api.loadBalancer.sticky.cookie: true
       traefik.http.services.web_api.loadBalancer.sticky.cookie.name: web_api_cookie
     deploy:
-      replicas: 5
+      replicas: 2
     depends_on:
       - reverse_proxy
