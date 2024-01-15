@@ -3,7 +3,7 @@ services:
   reverse_proxy:
     image: traefik:2.3.0
     command:
-      - --log.level=INFO
+      - --log.level=DEBUG
       - --api.insecure=true
       - --entrypoints.web.address=:80
       - --providers.docker
@@ -19,6 +19,26 @@ services:
       - '80:80'
 
 
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./portainer-data:/data
+    labels:
+      traefik.enable: true
+      traefik.http.routers.portainer.rule: Host(`portainer.localhost`)
+      traefik.http.routers.portainer.entrypoints: web
+      traefik.http.services.portainer.loadbalancer.server.port: 9000
+
+    depends_on:
+      - reverse_proxy
+
+
   website:
     image: web_static
     # container_name: web_static_website
@@ -26,7 +46,7 @@ services:
       traefik.enable: true
       traefik.http.routers.website.rule: Host(`localhost`)
     deploy:
-      replicas: 5
+      replicas: 2
     depends_on:
       - reverse_proxy
 
@@ -39,6 +59,6 @@ services:
       traefik.http.services.api.loadBalancer.sticky.cookie: true
       traefik.http.services.api.loadBalancer.sticky.cookie.name: web_api_cookie
     deploy:
-      replicas: 5
+      replicas: 2
     depends_on:
       - reverse_proxy
