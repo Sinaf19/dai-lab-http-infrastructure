@@ -10,7 +10,7 @@ Authors: Rachel Tranchida, Quentin Surdez
 4. [Revers proxy with Traefik](#reverse-proxy-with-traefik)
 5. [Scalability and load balancing](#scalability-and-load-balancing)
 6. [Load balancing with round-robin and sticky sessions](#load-balancing-with-round-robin-and-sticky-sessions)
-7. 
+7. [Securing Traefik with HTTPS](#securing-traefik-with-https)
 
 
 ## Static Web site
@@ -119,8 +119,75 @@ Then the replicas can be changed via this command `docker compose up -d --scale 
 
 Traefik strategy for load balancing is by default round-robin. This can be seen in the logs where each call to a server has a different IP address. 
 
+```
 
-## TODO
+2024-01-15T09:54:52.913614279Z time="2024-01-15T09:54:52Z" level=debug msg="vulcand/oxy/roundrobin/rr: Forwarding this request to URL" ForwardURL="http://172.25.0.5:80" 
 
-Check if the replicas are working and if sticky sessions and round-robin are working as well.
-It should but I haven't tested it yet :)
+
+2024-01-15T09:55:07.036123371Z time="2024-01-15T09:55:07Z" level=debug msg="vulcand/oxy/roundrobin/rr: Forwarding this request to URL"  ForwardURL="http://172.25.0.3:80"
+
+```
+
+Here we have truncated requests made from different instances of web browsers on the same computer. 
+
+We can see that the requests are forwarded to different servers for the static web.
+
+The behavior will look quite alike for the api servers. However the same client will always be answered by the same server.
+
+## Securing Traefik with HTTPS
+
+We have rummaged through the Traefik documentation to know exactly what needed to be done. We have added a configuration file named `traefik.yaml` and we mount it to a directory in our service `reverse_proxy`
+
+Here's the complete configuration: 
+
+```yaml
+# Traefik configuration file
+
+tls:
+  certificates:
+    - certFile: /etc/traefik/certificates/server.cert
+      keyFile: /etc/traefik/certificates/server.key
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+
+
+entryPoints:
+  web:
+    address: ":80"
+
+  websecure:
+    address: ":443"
+
+api:
+  dashboard: true
+  insecure: true
+```
+
+We also self-signed keys to have certificates. These are stored in the directory `cert` and are mounted in a directory within the `reverse_proxy` service.
+
+Here's the configuration of our docker compose file:
+
+```yaml
+  reverse_proxy:
+    image: traefik:2.8.0
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Mounting the certificate and the key
+      - ./cert:/etc/traefik/certificates
+      # Mounting the configuration file
+      - ./traefik.yaml:/etc/traefik/traefik.yaml
+
+    labels:
+      traefik.http.routers.dash.entrypoints: "websecure"
+      traefik.http.routers.dash.rule: Host(`dash.localhost`)
+      traefik.http.routers.dash.tls: true
+
+    ports:
+      - '80:80'
+      - '443:443'
+```
+
+We have only added the tls line and the entrypoints line to other services with the value you see up here. 
