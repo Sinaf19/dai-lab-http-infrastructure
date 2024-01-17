@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>ch.heig.dai.lab.http</groupId>
-  <artifactId>api</artifactId>
+  <artifactId>web_api</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
