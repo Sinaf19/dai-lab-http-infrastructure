@@ -15,7 +15,20 @@ Authors: Rachel Tranchida, Quentin Surdez
 
 ## Static Web site
 
-TODO Explain the content of nginx.conf :(((
+We have made a `Dockerfile` with all the different informations of our static website. 
+We have also created a `nginx.conf` file so that we can give it a configuration that is 
+different than the default one. 
+
+Here's our `Dockerfile`:
+
+```yaml
+FROM nginx
+LABEL authors="quentinsurdez"
+
+EXPOSE 80
+COPY . /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+```
 
 
 ## Docker Compose
