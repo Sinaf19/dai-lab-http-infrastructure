@@ -40,7 +40,7 @@ services:
 
 
   website:
-    image: web_static
+    build: ./website
     # container_name: web_static_website
     labels:
       traefik.enable: true
@@ -50,14 +50,14 @@ services:
     depends_on:
       - reverse_proxy
 
-  api:
-    image: web_api
+  web_api:
+    build: ./api
     # container_name: web_api_container
     labels:
       traefik.enable: true
-      traefik.http.routers.api.rule: Host(`localhost`) && PathPrefix(`/api`)
-      traefik.http.services.api.loadBalancer.sticky.cookie: true
-      traefik.http.services.api.loadBalancer.sticky.cookie.name: web_api_cookie
+      traefik.http.routers.web_api.rule: Host(`localhost`) && PathPrefix(`/api`)
+      traefik.http.services.web_api.loadBalancer.sticky.cookie: true
+      traefik.http.services.web_api.loadBalancer.sticky.cookie.name: web_api_cookie
     deploy:
       replicas: 2
     depends_on:
