@@ -11,6 +11,8 @@ Authors: Rachel Tranchida, Quentin Surdez
 5. [Scalability and load balancing](#scalability-and-load-balancing)
 6. [Load balancing with round-robin and sticky sessions](#load-balancing-with-round-robin-and-sticky-sessions)
 7. [Securing Traefik with HTTPS](#securing-traefik-with-https)
+8. [Management UI](#management-ui)
+9. [Integration API](#integration-api---static-web-site)
 
 
 ## Static Web site
@@ -191,3 +193,41 @@ Here's the configuration of our docker compose file:
 ```
 
 We have only added the tls line and the entrypoints line to other services with the value you see up here. 
+
+## Management UI
+
+We have chosen the portainer ui. It is very easy to implement in our docker compose. 
+We only need to add a service in our docker compose. 
+
+Here's the configuration:
+
+```yaml
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./portainer-data:/data
+    labels:
+      traefik.enable: true
+      traefik.http.routers.portainer.rule: Host(`portainer.localhost`)
+      traefik.http.routers.portainer.entrypoints: web
+      traefik.http.services.portainer.loadbalancer.server.port: 9000
+
+    depends_on:
+      - reverse_proxy
+```
+
+We then need to register with the admin user with the password `adminadminadmin`.
+
+Then we can choose what container we want to supervise.
+
+## Integration API - static Web site
+
+We have added a little script to call our API in the `index.html` file.
+
+One function that calls the api is called every 5 seconds to fetch all images and put them in the website.
