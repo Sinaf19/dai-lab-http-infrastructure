@@ -1,0 +1,22 @@
+# Traefik configuration file
+
+tls:
+  certificates:
+    - certFile: /etc/traefik/certificates/server.cert
+      keyFile: /etc/traefik/certificates/server.key
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+
+
+entryPoints:
+  web:
+    address: ":80"
+
+  websecure:
+    address: ":443"
+
+api:
+  dashboard: true
+  insecure: true
